@@ -15,8 +15,6 @@ class NetworkImageFromUrl extends StatelessWidget {
     return Center(
       child: CachedNetworkImage(
         fit: BoxFit.cover,
-        //height: isIcon ? null : MediaQuery.of(context).size.width * 0.50,
-        // width: isIcon ? null : MediaQuery.of(context).size.width * 0.50,
         imageUrl: imageUrl,
         placeholder: (context, url) => Center(
           child: Shimmer.fromColors(

@@ -1,4 +1,4 @@
-package com.example.lyricsizer
+package com.thebeastapplications.lyricsizer
 
 import io.flutter.embedding.android.FlutterActivity
 

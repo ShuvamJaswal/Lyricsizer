@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:lyricsizer/services/save_lyrics.dart';
+import 'package:lyricsizer/services/storage_access.dart';
 import 'package:lyricsizer/utils/get_lyrics.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LyricsScreen extends StatelessWidget {
   final String lyricsUrl;
-  const LyricsScreen({Key? key, required this.lyricsUrl}) : super(key: key);
+  final String songName;
+  final String artistName;
+  const LyricsScreen(
+      {Key? key,
+      required this.lyricsUrl,
+      required this.songName,
+      required this.artistName})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +22,6 @@ class LyricsScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Scaffold(
-              //     resizeToAvoidBottomInset: false,
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 title: const Text("Lyricsizer"),
@@ -82,7 +90,29 @@ class LyricsScreen extends StatelessWidget {
             //     resizeToAvoidBottomInset: false,
             appBar: AppBar(
               actions: [
-                IconButton(onPressed: () {}, icon: const Icon(Icons.save))
+                IconButton(
+                    onPressed: () async {
+                      try {
+                        await saveLyricsAsLrc(
+                            fileName: "$songName - $artistName.lrc",
+                            Lyrics: snapshot.data.toString());
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                    const Radius.circular(40))),
+                            backgroundColor: Colors.cyanAccent.shade400,
+                            content: const Text(
+                                "Lyrics Saved in Music/Lyrics folder")));
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(40))),
+                            backgroundColor: Colors.cyanAccent.shade400,
+                            content: const Text("Something Went Wrong")));
+                      }
+                    },
+                    icon: const Icon(Icons.save))
               ],
               automaticallyImplyLeading: false,
               title: const Text("Lyricsizer"),

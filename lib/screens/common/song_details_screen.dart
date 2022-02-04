@@ -69,7 +69,6 @@ class SongDetailsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(data.soundCloudUrl);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,10 +194,15 @@ class SongDetailsBody extends StatelessWidget {
             ),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          LyricsScreen(lyricsUrl: data.lyricsURL)));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LyricsScreen(
+                    lyricsUrl: data.lyricsURL,
+                    artistName: data.artist,
+                    songName: data.name,
+                  ),
+                ),
+              );
             },
             child: const Text(
               "LYRICS",
