@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyricsizer/services/save_lyrics.dart';
-import 'package:lyricsizer/services/storage_access.dart';
-import 'package:lyricsizer/utils/get_lyrics.dart';
+import 'package:lyricsizer/utils/utils.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LyricsScreen extends StatelessWidget {
@@ -18,7 +17,7 @@ class LyricsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getLyrics(lyricsUrl),
+        future: getLyricsFromUrl(lyricsUrl),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Scaffold(
@@ -94,20 +93,20 @@ class LyricsScreen extends StatelessWidget {
                     onPressed: () async {
                       try {
                         await saveLyricsAsLrc(
-                            fileName: "$songName - $artistName.lrc",
-                            Lyrics: snapshot.data.toString());
+                            fileName: "$songName - $artistName",
+                            lyrics: snapshot.data.toString());
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                    const Radius.circular(40))),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(40))),
                             backgroundColor: Colors.cyanAccent.shade400,
                             content: const Text(
                                 "Lyrics Saved in Music/Lyrics folder")));
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             shape: const RoundedRectangleBorder(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(40))),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(40))),
                             backgroundColor: Colors.cyanAccent.shade400,
                             content: const Text("Something Went Wrong")));
                       }

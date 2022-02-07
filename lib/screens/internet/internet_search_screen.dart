@@ -63,7 +63,7 @@ class SearchResultsView extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => SongDetailsScreen(
-                      key, searchProvider.results[index].songId),
+                      key: key, songId: searchProvider.results[index].songId),
                 ));
               },
               title: Text(searchProvider.results[index].name),

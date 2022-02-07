@@ -1,7 +1,7 @@
 class SongDetailsModel {
   final String? name;
   final String? imageUrl;
-  final String? lyricsURL;
+  final String lyricsURL;
 
   /// A unique songId.
   final String? id;
@@ -21,7 +21,7 @@ class SongDetailsModel {
     this.id,
     this.album,
     this.artist,
-    this.lyricsURL,
+    required this.lyricsURL,
     this.releaseDate,
     this.soundCloudUrl,
     this.spotifyUrl,

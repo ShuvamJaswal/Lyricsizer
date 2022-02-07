@@ -8,6 +8,7 @@ enum requestState { empty, isFetching, done, error, noResult }
 
 class SearchProvider with ChangeNotifier {
   var status = requestState.empty;
+
   var reqToken = CancelToken();
   final _dio = Dio(BaseOptions(
     baseUrl: 'https://genius.com/api/search',

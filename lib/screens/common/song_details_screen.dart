@@ -1,34 +1,23 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:lyricsizer/models/song_details_model.dart';
 import 'package:lyricsizer/screens/common/lyrics_screen.dart';
+import 'package:lyricsizer/utils/utils.dart';
 import 'package:lyricsizer/widgets/network_image.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SongDetailsScreen extends StatefulWidget {
   final String songId;
-  const SongDetailsScreen(
+  const SongDetailsScreen({
     Key? key,
-    this.songId,
-  ) : super(key: key);
+    required this.songId,
+  }) : super(key: key);
   @override
   _SongDetailsScreenState createState() => _SongDetailsScreenState();
 }
 
 class _SongDetailsScreenState extends State<SongDetailsScreen> {
-  Future<SongDetailsModel> _getSongData() async {
-    return await Dio()
-        .get("https://genius.com/api/songs/${widget.songId}")
-        .then(
-      (value) {
-        return SongDetailsModel.fromJSON(
-            value.data['response']['song'] as Map<String, dynamic>);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +29,7 @@ class _SongDetailsScreenState extends State<SongDetailsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: FutureBuilder<SongDetailsModel>(
-          future: _getSongData(),
+          future: getSongDataFromId(widget.songId),
           builder: (context, snapshot) {
             //  if (!snapshot.hasData) return CircularProgressIndicator();
             if (!snapshot.hasData) {
