@@ -7,6 +7,7 @@ class StorageAccess {
     if (await Permission.storage.isGranted) {
       return true;
     } else {
+      await Permission.manageExternalStorage.request();
       return Permission.storage.request().then((storage) {
         return storage.isGranted;
       });

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lyricsizer/providers/download_mode_provider.dart';
 import 'package:lyricsizer/providers/download_provider.dart';
 import 'package:lyricsizer/screens/common/song_details_screen.dart';
 import 'package:lyricsizer/services/save_lyrics.dart';
 import 'package:lyricsizer/services/storage_access.dart';
 import 'package:lyricsizer/utils/utils.dart';
+import 'package:on_audio_edit/on_audio_edit.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +23,9 @@ class _LocalMainScreenState extends State<LocalMainScreen> {
     return songs;
   }
 
+  List<SongModel> songList = [];
   final OnAudioQuery _audioQuery = OnAudioQuery();
+  final OnAudioEdit _audioEdit = OnAudioEdit();
   @override
   void initState() {
     super.initState();
@@ -42,6 +46,7 @@ class _LocalMainScreenState extends State<LocalMainScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text("Lyricsizer"),
+        actions: [SwitchButton()],
       ),
       body: FutureBuilder<List<SongModel>>(
         // Default values:
@@ -57,9 +62,9 @@ class _LocalMainScreenState extends State<LocalMainScreen> {
 
           // You can use [item.data!] direct or you can create a:
           // List<SongModel> songs = item.data!;
-
+          songList = item.data!;
           return ListView.builder(
-            itemCount: item.data!.length,
+            itemCount: songList.length,
             addAutomaticKeepAlives: true,
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
@@ -70,7 +75,7 @@ class _LocalMainScreenState extends State<LocalMainScreen> {
                         context: context,
                         builder: (_) =>
                             const Center(child: CircularProgressIndicator()));
-                    String _songId = await getSongId(item.data![index].title);
+                    String _songId = await getSongId(songList[index].title);
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -90,14 +95,14 @@ class _LocalMainScreenState extends State<LocalMainScreen> {
                     );
                   }
                 },
-                title: Text(item.data![index].title),
-                subtitle: Text(item.data![index].artist ?? "No Artist"),
+                title: Text(songList[index].title),
+                subtitle: Text(songList[index].artist ?? "No Artist"),
                 trailing: ChangeNotifierProvider.value(
                     value: DownloadProvider(),
-                    child: DownloadButton(title: item.data![index].title)),
+                    child: DownloadButton(songData: songList[index].getMap)),
                 leading: QueryArtworkWidget(
                   nullArtworkWidget: const Icon(Icons.music_note),
-                  id: item.data![index].id,
+                  id: songList[index].id,
                   type: ArtworkType.AUDIO,
                 ),
               );
@@ -110,8 +115,8 @@ class _LocalMainScreenState extends State<LocalMainScreen> {
 }
 
 class DownloadButton extends StatefulWidget {
-  final String title;
-  const DownloadButton({Key? key, required this.title}) : super(key: key);
+  final Map<dynamic, dynamic> songData;
+  const DownloadButton({Key? key, required this.songData}) : super(key: key);
 
   @override
   _DownloadButtonState createState() => _DownloadButtonState();
@@ -124,7 +129,7 @@ class _DownloadButtonState extends State<DownloadButton>
   bool get wantKeepAlive => true;
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
+    super.build(context);
     return GestureDetector(
       child: Consumer<DownloadProvider>(
         builder: (context, value, child) => Builder(
@@ -148,21 +153,42 @@ class _DownloadButtonState extends State<DownloadButton>
               case requestState.isFetching:
                 return const CircularProgressIndicator();
               case requestState.initial:
-                return IconButton(
-                    onPressed: () async {
-                      value.saveAsLrc(title: widget.title);
-                    },
-                    icon: const Icon(Icons.save));
+                return context
+                            .watch<DownloadModeProvider>()
+                            .DownloadButtonMode ==
+                        buttonMode.saveAsLrc
+                    ? TextButton(
+                        onPressed: () async {
+                          print("pressed save as lrc");
+                          value.saveAsLrc(title: widget.songData['title']);
+                        },
+                        child: const Text("Save as LRC"))
+                    : TextButton(
+                        onPressed: () async {
+                          value.AddInSong(data: widget.songData);
+                        },
+                        child: const Text("Add in Song"));
 
               default:
                 return const IconButton(
                     onPressed: null, icon: const Icon(Icons.save));
             }
-
-            const Text("");
           },
         ),
       ),
     );
+  }
+}
+
+class SwitchButton extends StatelessWidget {
+  const SwitchButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Switch(
+        value: context.select<DownloadModeProvider, bool>(
+            (v) => v.DownloadButtonMode == buttonMode.saveAsLrc),
+        onChanged: (v) =>
+            context.read<DownloadModeProvider>().changeDownloadMode());
   }
 }

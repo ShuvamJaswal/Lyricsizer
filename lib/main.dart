@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lyricsizer/providers/download_mode_provider.dart';
 import 'package:lyricsizer/providers/search_provider.dart';
 import 'package:lyricsizer/screens/internet/internet_search_screen.dart';
 import 'package:lyricsizer/screens/local/local_main_screen.dart';
@@ -16,6 +17,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
+          ChangeNotifierProvider<DownloadModeProvider>(
+              create: (_) => DownloadModeProvider()),
           ChangeNotifierProvider<SearchProvider>(
             create: (_) => SearchProvider(),
           ),
