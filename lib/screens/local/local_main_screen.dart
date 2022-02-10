@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lyricsizer/providers/download_mode_provider.dart';
 import 'package:lyricsizer/providers/download_provider.dart';
 import 'package:lyricsizer/screens/common/song_details_screen.dart';
-import 'package:lyricsizer/services/save_lyrics.dart';
 import 'package:lyricsizer/services/storage_access.dart';
 import 'package:lyricsizer/utils/utils.dart';
-import 'package:on_audio_edit/on_audio_edit.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
@@ -25,11 +23,12 @@ class _LocalMainScreenState extends State<LocalMainScreen> {
 
   List<SongModel> songList = [];
   final OnAudioQuery _audioQuery = OnAudioQuery();
-  final OnAudioEdit _audioEdit = OnAudioEdit();
+
   @override
   void initState() {
     super.initState();
     getPermission();
+    setState(() {});
   }
 
   getPermission() async {
@@ -46,7 +45,7 @@ class _LocalMainScreenState extends State<LocalMainScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text("Lyricsizer"),
-        actions: [SwitchButton()],
+        actions: const [SwitchButton()],
       ),
       body: FutureBuilder<List<SongModel>>(
         // Default values:
@@ -138,7 +137,7 @@ class _DownloadButtonState extends State<DownloadButton>
               case requestState.error:
                 return IconButton(
                   onPressed: () {},
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.error,
                     color: Colors.red,
                   ),
@@ -146,7 +145,7 @@ class _DownloadButtonState extends State<DownloadButton>
               case requestState.done:
                 return IconButton(
                     onPressed: () {},
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.done,
                       color: Colors.green,
                     ));
@@ -155,23 +154,22 @@ class _DownloadButtonState extends State<DownloadButton>
               case requestState.initial:
                 return context
                             .watch<DownloadModeProvider>()
-                            .DownloadButtonMode ==
+                            .downloadButtonMode ==
                         buttonMode.saveAsLrc
                     ? TextButton(
                         onPressed: () async {
-                          print("pressed save as lrc");
                           value.saveAsLrc(title: widget.songData['title']);
                         },
                         child: const Text("Save as LRC"))
                     : TextButton(
                         onPressed: () async {
-                          value.AddInSong(data: widget.songData);
+                          value.addInSong(data: widget.songData);
                         },
                         child: const Text("Add in Song"));
 
               default:
                 return const IconButton(
-                    onPressed: null, icon: const Icon(Icons.save));
+                    onPressed: null, icon: Icon(Icons.save));
             }
           },
         ),
@@ -187,7 +185,7 @@ class SwitchButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Switch(
         value: context.select<DownloadModeProvider, bool>(
-            (v) => v.DownloadButtonMode == buttonMode.saveAsLrc),
+            (v) => v.downloadButtonMode == buttonMode.saveAsLrc),
         onChanged: (v) =>
             context.read<DownloadModeProvider>().changeDownloadMode());
   }

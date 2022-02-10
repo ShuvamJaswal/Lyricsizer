@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class StorageAccess {
   Future<bool> checkPermission() async {
+    await Permission.manageExternalStorage.request();
     if (await Permission.storage.isGranted) {
       return true;
     } else {

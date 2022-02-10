@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lyricsizer/services/save_lyrics.dart';
+import 'package:lyricsizer/services/storage_access.dart';
 import 'package:lyricsizer/utils/utils.dart';
 import 'package:on_audio_edit/on_audio_edit.dart';
 
@@ -8,9 +9,9 @@ enum requestState { initial, isFetching, done, error, noResult }
 class DownloadProvider with ChangeNotifier {
   var status = requestState.initial;
   final OnAudioEdit _audioEdit = OnAudioEdit();
-  Future<void> AddInSong({required Map<dynamic, dynamic> data}) async {
+  Future<void> addInSong({required Map<dynamic, dynamic> data}) async {
     Map<TagType, dynamic> tags = {};
-
+    StorageAccess().checkPermission();
     status = requestState.isFetching;
     notifyListeners();
     try {
@@ -24,7 +25,6 @@ class DownloadProvider with ChangeNotifier {
       status = requestState.done;
       notifyListeners();
     } catch (e) {
-      print(e);
       status = requestState.error;
       notifyListeners();
     }
@@ -39,7 +39,6 @@ class DownloadProvider with ChangeNotifier {
       status = requestState.done;
       notifyListeners();
     } catch (e) {
-      print(e);
       status = requestState.error;
       notifyListeners();
     }

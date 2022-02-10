@@ -23,9 +23,9 @@ class _InternetMainScreenState extends State<InternetMainScreen> {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            children: const [
+            children: [
               SearchFieldInput(),
-              Expanded(child: SearchResultsView())
+              const Expanded(child: SearchResultsView())
             ],
           ),
         ));
@@ -83,17 +83,20 @@ class SearchResultsView extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class SearchFieldInput extends StatelessWidget {
-  const SearchFieldInput({Key? key}) : super(key: key);
+  SearchFieldInput({Key? key}) : super(key: key);
+  String lastInput = "";
   @override
   Widget build(BuildContext context) {
-    final searchProvider = Provider.of<SearchProvider>(
-      context,
-    );
+    final searchProvider = Provider.of<SearchProvider>(context);
 
     return TextField(
       onChanged: (text) {
-        searchProvider.makeSearchQuery(text);
+        if (lastInput != text) {
+          searchProvider.makeSearchQuery(text);
+        }
+        lastInput = text;
       },
       decoration: const InputDecoration(
         border: OutlineInputBorder(

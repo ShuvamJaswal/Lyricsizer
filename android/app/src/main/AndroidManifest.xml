@@ -2,7 +2,7 @@
     package="com.thebeastapplications.lyricsizer">
        <application
    android:requestLegacyExternalStorage="true"
-        android:label="lyricsizer"
+        android:label="Lyricsizer"
         android:icon="@mipmap/ic_launcher">
    
         <activity

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 enum buttonMode { saveAsLrc, embedInSong }
 
 class DownloadModeProvider with ChangeNotifier {
-  var DownloadButtonMode = buttonMode.saveAsLrc;
+  var downloadButtonMode = buttonMode.saveAsLrc;
   void changeDownloadMode() {
-    DownloadButtonMode = DownloadButtonMode == buttonMode.saveAsLrc
+    downloadButtonMode = downloadButtonMode == buttonMode.saveAsLrc
         ? buttonMode.embedInSong
         : buttonMode.saveAsLrc;
     notifyListeners();
